@@ -1,0 +1,107 @@
+import time
+
+import pygame
+import random
+
+# Inicialização do pygame
+pygame.init()
+
+# Definição de variáveis iniciais
+p_x = 300
+p_y = 100
+P_speed = 5
+
+I_x = 100
+
+I_y1 = 700
+I_y2 = 1000
+I_y3 = 600
+
+I_speed = random.randint(5, 10)
+
+timer = 0
+
+# Carregamento de imagens e música
+FDP = pygame.image.load('Space.png')
+PP = pygame.image.load('SS.png')
+I1 = pygame.image.load('asteroid.png')
+I2 = pygame.image.load('ISS.png')
+I3 = pygame.image.load('ISS3.png')
+pygame.mixer.music.load('EpicMusic.mpeg')
+
+# Configuração da tela
+tf = pygame.font.SysFont('Bauhaus 93', 25)
+pg = pygame.display.set_mode((700, 600))
+pygame.display.set_caption('Projeto Do Jogo2')
+
+pos_t = (65, 50)
+
+pygame.mixer.music.play()
+pga = True
+
+
+# Função para verificar a colisão
+def check_collision(p_x, p_y, I_x, I_y):
+    p_rect = PP.get_rect(topleft=(p_x, p_y))
+    I_rect = I1.get_rect(topleft=(I_x + 100, I_y))
+    return p_rect.colliderect(I_rect)
+
+
+# Defina uma variável para controlar o tempo
+start_time = time.time()
+
+# Loop principal
+while pga:
+    pygame.time.delay(50)
+
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pga = False
+
+    cmnd = pygame.key.get_pressed()
+    if cmnd[pygame.K_RIGHT]:
+        p_x += P_speed
+    if cmnd[pygame.K_LEFT]:
+        p_x -= P_speed
+
+    # Resto do código...
+
+    # Calcule o tempo decorrido em segundos
+    elapsed_time = int(time.time() - start_time)
+
+    # Atualize o contador de tempo
+    txt = tf.render('T= ' + str(elapsed_time), True, (255, 255, 255))
+
+    # COLISAO
+    if check_collision(p_x, p_y, I_x, I_y1):
+        p_y = 2000
+
+    timer += 1
+    if timer >= 10:
+        timer = 0
+
+    if I_y1 <= -80:
+        I_y1 = random.randint(900, 1400)
+
+    if I_y2 <= -80:
+        I_y2 = random.randint(900, 1400)
+
+    if I_y3 <= -80:
+        I_y3 = random.randint(900, 1400)
+
+    I_y1 -= I_speed
+    I_y2 -= I_speed
+    I_y3 -= I_speed
+
+    # Atualização da tela
+    pg.blit(FDP, (0, 0))
+    pg.blit(PP, (p_x, p_y))
+    pg.blit(I1, (I_x + 100, I_y1))
+    pg.blit(I2, (I_x + 250, I_y2))
+    pg.blit(I3, (I_x + 400, I_y3))
+    txt = tf.render('T= ' + str(timer), True, (255, 255, 255))
+    pg.blit(txt, pos_t)
+
+    pygame.display.update()
+
+pygame.quit()
